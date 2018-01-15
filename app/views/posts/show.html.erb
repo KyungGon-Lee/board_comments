@@ -1,0 +1,37 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @post.title %>
+</p>
+
+<p>
+  <strong>Content:</strong>
+  <%= @markdown.render(@post.content).html_safe %>
+</p>
+
+<%= link_to 'Edit', edit_post_path(@post) %> |
+<%= link_to 'Back', posts_path %>
+
+<%= form_tag "/posts/#{@post.id}/comments", method: :post do %>
+  <%= text_field_tag :content %>
+  <%= submit_tag "댓글 쓰기" %>
+<% end %>
+
+
+<!--
+폼태그 이렇게도 만드는 것이 가능
+근데 그냥하면 InvalidAuthenticityToken 오류가 뜸
+왜냐면 그토큰 자동생성이 안되서 그래서 인풋타입 히든으로 csrf토큰을 보내야됨
+ -->
+<form action='<%=@post.id%>/comments' method='post'>
+  <input name='content' />
+  <input type='hidden' name='post_id' value = '<%= @post.id%>' />
+  <input type="hidden" name='authenticity_token' value='<%= form_authenticity_token %>' />
+  <input type = 'submit' />
+</form>
+
+<% @post.comments.each do |comment| %>
+<p>작성자 : <%= comment.user.email %></p>
+<p>내용 : <%= comment.content %></p>
+<% end %>
