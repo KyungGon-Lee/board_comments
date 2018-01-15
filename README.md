@@ -1,4 +1,4 @@
-게시판 만드는데 게시글 옆에 댓글갯수
+#게시판 만드는데 게시글 옆에 댓글갯수
 
 reference
 post:reference
@@ -7,48 +7,42 @@ rails g model comment post_id:integer content:text
 
 rails goreign key
 
-폼태그 이렇게도 만드는것이 가능
-<form action='/posts/comment' method='post'>
-<input name='content />
-<input hidden='post_id' value = '<%=@post.id %>
-<input type = 'submit' />
+#폼태그 이렇게도 만드는것이 가능
+<form action='<%=@post.id%>/comments' method='post'>
+  <input name='content' />
+  <input type='hidden' name='post_id' value = '<%= @post.id%>' />
+  <input type="hidden" name='authenticity_token' value='<%= form_authenticity_token %>' />
+  <input type = 'submit' />
 </form>
 
-
-
-SELECT2
-
+#pry에서 한번 해보기
 
 Post.all.eager_load(:comments)
 
 Post.all.includes(:comments)
 Post.all.preload(:comments)
 
-컨트롤러 이렇게만듬
+#컨트롤러 인덱스를 이렇게만듬 그럼 최적화가됨 comments를 여러번 쿼리를보내지 않게됨
   def index
     @posts = Post.all.includes(:comments)
   end
 
-그럼 includes로 바뀜
+#그럼 includes로 바뀜
 
 
 Post.includes(:tags).where(tags=> ({content: 'faker'})
-이렇게 하면 태그가 페이커인것만 찾음
+#이렇게 하면 태그가 페이커인것만 찾음
 근데 관계설정 해줘야됨 post에다가 has_many :faker 해줘야 함
 그리고 tag란모델을 임의적으로 만들어줘야 됨
 근데 preload는 안됨이거
 
 
-결과적으로 includes를 쓰는게 편함
+#결과적으로 includes를 쓰는게 편함
 Comment.includes(:post)
-
-
 
 mark down
 
-
-
-gfm
+#gfm
 
 
 simple mde
@@ -66,12 +60,12 @@ var simplemde = new SimpleMDE();
 </script>
 이걸 form_for 안에다 넣기
 
-자바스크립트버전
+#자바스크립트버전
 <script>
 var simplemde = new SimpleMDE({ element: document.getElementById("MyID") });
 </script>
 
-Jquery 버전
+#Jquery 버전(여기엔 이걸로했음)
 <script>
 var simplemde = new SimpleMDE({ element: $("#MyID")[0] });
 </script>
@@ -81,19 +75,20 @@ var simplemde = new SimpleMDE({ element: $("#MyID")[0] });
 we don't need Jquery
 
 
-gem redcarpet
+#gem redcarpet 설치하기
 
 
-마크다운 파서
+#마크다운 parser
 markdown = Redcarpet::Markdown.new(renderer, extensions = {})
 markdown.render("This is *bongos*, indeed.")
-포스트컨트롤러의 show에다가 복붙하기
+#포스트컨트롤러의 show에다가 복붙하기
 
-근데 그대로하면 렌더러 에러뜸
+#근데 그대로하면 렌더러 에러뜸
 
   markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions = {})
 
-두줄 지우고 이렇게 해야됨
+# 그래서 두줄 지우고 이렇게 해야됨
 
-그리고 쇼페이지가서 content 수정
+#그리고 쇼페이지가서 content 수정
   <%= @markdown.render(@post.content).html_safe %>
+# 이렇게하면 이쁘게 나온당
